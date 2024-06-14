@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client'
 import axios from 'axios';
-import { BrowserRouter as Router, Route, Switch, useHistory } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import LoginForm from './LoginForm'; // Import the LoginForm component
 
 function RegistrationForm() {
   const [formData, setFormData] = useState({
@@ -9,7 +11,7 @@ function RegistrationForm() {
     password: '',
   });
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -23,7 +25,7 @@ function RegistrationForm() {
     try {
       const response = await axios.post('/api/register', formData);
       console.log(response.data); // Print response from server
-      history.push('/success'); // Redirect to success page
+      navigate('/success'); // Redirect to success page
     } catch (error) {
       console.error('Error registering user:', error);
     }
@@ -59,12 +61,13 @@ function SuccessPage() {
 function App() {
   return (
     <Router>
-      <Switch>
-        <Route path="/" exact component={RegistrationForm} />
-        <Route path="/success" component={SuccessPage} />
-      </Switch>
+      <Routes>
+        <Route path="/" element={<RegistrationForm />} />
+        <Route path="/success" element={<SuccessPage />} />
+      </Routes>
     </Router>
   );
 }
 
-ReactDOM.render(<App />, document.getElementById('registration-form-container'));
+const root = createRoot(document.getElementById('registration-form-container'));
+root.render(<App />);
